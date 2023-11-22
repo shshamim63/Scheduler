@@ -1,4 +1,5 @@
 import { useReducer } from 'react';
+import Button from '../../ui/Button';
 
 const initialState = {
   firstName: '',
@@ -53,7 +54,7 @@ const Registration = () => {
     <form onSubmit={handleSubmit}>
       <p className="mb-4 text-center text-sm text-stone-600 md:text-base">
         {' '}
-        👋 Welcome! Please start by telling us your name:
+        👋 Welcome! Please start by creating an account:
       </p>
       <div className="text-center">
         <div className="my-1">
@@ -70,6 +71,7 @@ const Registration = () => {
                   payload: e.target.value,
                 });
               }}
+              className="input mb-3"
             />
           </div>
         </div>
@@ -87,6 +89,7 @@ const Registration = () => {
                   payload: e.target.value,
                 });
               }}
+              className="input mb-3"
             />
           </div>
         </div>
@@ -105,6 +108,7 @@ const Registration = () => {
                   payload: e.target.value,
                 });
               }}
+              className="input mb-3"
             />
           </div>
         </div>
@@ -122,6 +126,7 @@ const Registration = () => {
                   payload: e.target.value,
                 });
               }}
+              className="input mb-3"
             />
           </div>
         </div>
@@ -139,8 +144,12 @@ const Registration = () => {
                   payload: e.target.value,
                 });
               }}
+              className="input mb-3"
             />
           </div>
+        </div>
+        <div className="mt-8">
+          <Button type="primary">Sign Up</Button>
         </div>
       </div>
     </form>
