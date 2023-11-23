@@ -1,16 +1,32 @@
+import { useDispatch, useSelector } from 'react-redux';
+
 import LinkButton from '../../ui/LinkButton';
 import Button from '../../ui/Button';
-
-import { fakeCart } from '../order/CreateOrder';
 import CartItem from './CartItem';
+import EmptyCart from './EmptyCart';
+
+import { clearCart, getCart } from './cartSlice';
+import { getUser } from '../user/userSlice';
 
 const Cart = () => {
-  const cart = fakeCart;
+  const currentUser = useSelector(getUser);
+  const cart = useSelector(getCart);
+
+  const dispatch = useDispatch();
+
+  const handleClearCart = () => {
+    dispatch(clearCart());
+  };
+
+  if (!cart.length) return <EmptyCart />;
+
   return (
     <div className="px-4 py-3">
       <LinkButton to="/menu">&larr; Back to menu</LinkButton>
 
-      <h2 className="mt-7 text-xl font-semibold">Your cart, %Name%</h2>
+      <h2 className="mt-7 text-xl font-semibold">
+        Your cart, {currentUser?.email}
+      </h2>
 
       <ul className="mt-3 divide-y divide-stone-200 border-b">
         {cart.map((item) => (
@@ -22,7 +38,9 @@ const Cart = () => {
         <Button type="primary" to="/order/new">
           Order Pizzas
         </Button>
-        <Button type="secondary">Clear cart</Button>
+        <Button type="secondary" onClick={handleClearCart}>
+          Clear cart
+        </Button>
       </div>
     </div>
   );
