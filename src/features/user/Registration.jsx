@@ -1,5 +1,8 @@
 import { useReducer } from 'react';
 import Button from '../../ui/Button';
+import { useDispatch } from 'react-redux';
+import { registerUser } from './userSlice';
+import { useNavigate } from 'react-router-dom';
 
 const initialState = {
   firstName: '',
@@ -46,20 +49,38 @@ function reducer(state, action) {
 const Registration = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  const rdispatch = useDispatch();
+  const navigate = useNavigate();
+
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (
+      !state.firstName ||
+      !state.lastName ||
+      !state.email ||
+      !state.password ||
+      !state.confirmPassword
+    )
+      return;
+    rdispatch(registerUser(state));
+    navigate('/menu');
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <div className="px-4 py-6">
       <p className="mb-4 text-center text-sm text-stone-600 md:text-base">
         {' '}
         👋 Welcome! Please start by creating an account:
       </p>
-      <div className="text-center">
-        <div className="my-1">
-          <label htmlFor="first-name">First name</label>
-          <div>
+      <form
+        onSubmit={handleSubmit}
+        className="rounded-md bg-stone-300 px-6 py-6"
+      >
+        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+          <label className="sm:basis-40" htmlFor="first-name">
+            First name
+          </label>
+          <div className="grow">
             <input
               placeholder="John"
               id="first-name"
@@ -71,13 +92,15 @@ const Registration = () => {
                   payload: e.target.value,
                 });
               }}
-              className="input mb-3"
+              className="input w-full"
             />
           </div>
         </div>
-        <div className="my-1">
-          <label htmlFor="last-name">Last name</label>
-          <div>
+        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+          <label htmlFor="last-name" className="sm:basis-40">
+            Last name
+          </label>
+          <div className="grow">
             <input
               placeholder="Doe"
               id="last-name"
@@ -89,13 +112,15 @@ const Registration = () => {
                   payload: e.target.value,
                 });
               }}
-              className="input mb-3"
+              className="input w-full"
             />
           </div>
         </div>
-        <div className="my-1">
-          <label htmlFor="email">Email address</label>
-          <div>
+        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+          <label htmlFor="email" className="sm:basis-40">
+            Email
+          </label>
+          <div className="grow">
             <input
               placeholder="john@example.com"
               id="email"
@@ -108,13 +133,15 @@ const Registration = () => {
                   payload: e.target.value,
                 });
               }}
-              className="input mb-3"
+              className="input w-full"
             />
           </div>
         </div>
-        <div className="my-1">
-          <label htmlFor="password">Password</label>
-          <div>
+        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+          <label htmlFor="password" className="sm:basis-40">
+            Password
+          </label>
+          <div className="grow">
             <input
               id="password"
               name="password"
@@ -126,13 +153,15 @@ const Registration = () => {
                   payload: e.target.value,
                 });
               }}
-              className="input mb-3"
+              className="input w-full"
             />
           </div>
         </div>
-        <div>
-          <label htmlFor="confirm-password">Confirm Password</label>
-          <div>
+        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
+          <label htmlFor="confirm-password" className="sm:basis-40">
+            Confirm Password
+          </label>
+          <div className="grow">
             <input
               id="confirm-password"
               name="confirm-password"
@@ -144,15 +173,15 @@ const Registration = () => {
                   payload: e.target.value,
                 });
               }}
-              className="input mb-3"
+              className="input w-full"
             />
           </div>
         </div>
-        <div className="mt-8">
+        <div className="mt-8 flex flex-row-reverse">
           <Button type="primary">Sign Up</Button>
         </div>
-      </div>
-    </form>
+      </form>
+    </div>
   );
 };
 
