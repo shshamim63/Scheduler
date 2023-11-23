@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-const Button = ({ children, disabled, to, type }) => {
+const Button = ({ children, disabled, to, type, onClick }) => {
   const base =
     'text-sm inline-block rounded-full bg-yellow-400 font-semibold uppercase tracking-wide text-stone-800 transition-colors duration-300 hover:bg-yellow-300 focus:bg-yellow-300  focus:outline-none focus:ring focus:ring-yellow-300 focus:ring-offset-2 disabled:cursor-not-allowed';
 
@@ -19,12 +19,21 @@ const Button = ({ children, disabled, to, type }) => {
         {children}
       </Link>
     );
+
   if (type === 'submit')
     return (
       <button type="submit" className={styles[type]}>
         {children}
       </button>
     );
+
+  if (onClick)
+    return (
+      <button disabled={disabled} className={styles[type]} onClick={onClick}>
+        {children}
+      </button>
+    );
+
   return (
     <button disabled={disabled} className={styles[type]}>
       {children}
@@ -34,9 +43,10 @@ const Button = ({ children, disabled, to, type }) => {
 
 Button.propTypes = {
   children: PropTypes.any.isRequired,
-  disabled: PropTypes.bool.isRequired,
+  disabled: PropTypes.bool,
   to: PropTypes.string,
   type: PropTypes.string,
+  onClick: PropTypes.func,
 };
 
 export default Button;

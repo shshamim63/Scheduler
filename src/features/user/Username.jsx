@@ -1,13 +1,15 @@
 import { useSelector } from 'react-redux';
+import { getIsAuthenticated, getUser } from './userSlice';
 
 const Username = () => {
-  const user = useSelector((state) => state.user);
+  const currentUser = useSelector(getUser);
+  const isAuthenticated = useSelector(getIsAuthenticated);
 
-  if (!user.isAuthenticated) return null;
+  if (!isAuthenticated) return null;
 
   return (
     <div className="hidden text-sm font-semibold md:block">
-      {user.currentUser.email}
+      {currentUser.email}
     </div>
   );
 };
