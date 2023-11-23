@@ -22,3 +22,6 @@ const userSlice = createSlice({
 
 export const { registerUser, login } = userSlice.actions;
 export default userSlice.reducer;
+
+export const getUser = (state) => state.user.currentUser;
+export const getIsAuthenticated = (state) => state.user.isAuthenticated;
