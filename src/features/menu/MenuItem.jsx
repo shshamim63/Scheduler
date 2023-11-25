@@ -6,6 +6,7 @@ import { formatCurrency } from '../../utils/currency';
 import Button from '../../ui/Button';
 import { addItem, getCurrentQuantityByID } from '../cart/cartSlice';
 import DeleteItem from '../cart/DeleteItem';
+import UpdateItemQuantity from '../cart/UpdateItemQuantity';
 
 const MenuItem = ({ pizza }) => {
   const { id, name, unitPrice, ingredients, soldOut, imageUrl } = pizza;
@@ -34,9 +35,9 @@ const MenuItem = ({ pizza }) => {
         alt={name}
         className={`h-24 ${soldOut ? 'opacity-70 grayscale' : ''}`}
       />
-      <div className="flex grow flex-col pt-0.5">
+      <div className="flex w-3/4 grow flex-col pt-0.5 sm:w-auto">
         <p className="font-medium">{name}</p>
-        <p className="text-sm capitalize italic text-stone-500">
+        <p className=" truncate text-sm capitalize italic text-stone-500 ">
           {ingredients}
         </p>
         <div className="mt-auto flex items-center justify-between">
@@ -48,7 +49,15 @@ const MenuItem = ({ pizza }) => {
             </p>
           )}
 
-          {isInCart && <DeleteItem pizzaId={id} />}
+          {isInCart && (
+            <div className="flex items-center gap-3 sm:gap-8">
+              <UpdateItemQuantity
+                pizzaId={id}
+                currentQuantity={currentQuantity}
+              />
+              <DeleteItem pizzaId={id} />
+            </div>
+          )}
 
           {!soldOut && !isInCart && (
             <Button type="small" onClick={handleAddToCart}>

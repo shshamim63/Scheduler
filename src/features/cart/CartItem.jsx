@@ -3,9 +3,14 @@ import PropTypes from 'prop-types';
 import { formatCurrency } from '../../utils/currency';
 
 import DeleteItem from './DeleteItem';
+import UpdateItemQuantity from './UpdateItemQuantity';
+import { useSelector } from 'react-redux';
+import { getCurrentQuantityByID } from './cartSlice';
 
 const CartItem = ({ item }) => {
   const { name, quantity, totalPrice, pizzaId } = item;
+
+  const currentQuantity = useSelector(getCurrentQuantityByID(pizzaId));
 
   return (
     <li className="py-3 sm:flex sm:items-center sm:justify-between">
@@ -14,6 +19,10 @@ const CartItem = ({ item }) => {
       </p>
       <div className="flex items-center justify-between sm:gap-6">
         <p className="text-sm font-bold">{formatCurrency(totalPrice)}</p>
+        <UpdateItemQuantity
+          pizzaId={pizzaId}
+          currentQuantity={currentQuantity}
+        />
         <DeleteItem pizzaId={pizzaId} />
       </div>
     </li>
