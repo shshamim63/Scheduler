@@ -6,10 +6,10 @@ import CartItem from './CartItem';
 import EmptyCart from './EmptyCart';
 
 import { clearCart, getCart } from './cartSlice';
-import { getUser } from '../user/userSlice';
+import { getUserInfo } from '../user/userSlice';
 
 const Cart = () => {
-  const currentUser = useSelector(getUser);
+  const currentUser = useSelector(getUserInfo);
   const cart = useSelector(getCart);
 
   const dispatch = useDispatch();

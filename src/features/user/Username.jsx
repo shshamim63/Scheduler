@@ -1,11 +1,10 @@
 import { useSelector } from 'react-redux';
-import { getIsAuthenticated, getUser } from './userSlice';
+import { getUserInfo } from './userSlice';
 
 const Username = () => {
-  const currentUser = useSelector(getUser);
-  const isAuthenticated = useSelector(getIsAuthenticated);
+  const currentUser = useSelector(getUserInfo);
 
-  if (!isAuthenticated) return null;
+  if (!currentUser) return null;
 
   return (
     <div className="hidden text-sm font-semibold md:block">

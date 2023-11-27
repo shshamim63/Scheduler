@@ -1,5 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+
 import { getAddress } from '../../services/apiGeocoding';
+import { registerUser } from '../../services/apiAuth';
 
 function getPosition() {
   return new Promise(function (resolve, reject) {
@@ -8,7 +10,7 @@ function getPosition() {
 }
 
 export const fetchAddress = createAsyncThunk(
-  'user/fetchAddress',
+  'auth/fetchAddress',
   async function () {
     const positionObj = await getPosition();
     const position = {
@@ -23,28 +25,25 @@ export const fetchAddress = createAsyncThunk(
   },
 );
 
+export const signup = createAsyncThunk('auth/register', async function (data) {
+  const userInfo = await registerUser(data);
+  return userInfo;
+});
+
 const initialState = {
-  currentUser: null,
+  userInfo: null,
+  authError: '',
   status: 'idle',
   position: {},
   address: '',
   error: '',
-  isAuthenticated: false,
+  accessToken: '',
 };
 
 const userSlice = createSlice({
-  name: 'user',
+  name: 'auth',
   initialState,
-  reducers: {
-    registerUser(state, action) {
-      state.currentUser = action.payload;
-      state.isAuthenticated = true;
-    },
-    login(state, action) {
-      state.currentUser = action.payload;
-      state.isAuthenticated = true;
-    },
-  },
+  reducers: {},
   extraReducers: (builder) =>
     builder
       .addCase(fetchAddress.pending, (state) => {
@@ -58,12 +57,24 @@ const userSlice = createSlice({
       .addCase(fetchAddress.rejected, (state, action) => {
         state.error = action.error.message;
         state.status = 'error';
+      })
+      .addCase(signup.pending, (state) => {
+        state.status = 'loading';
+        state.authError = '';
+      })
+      .addCase(signup.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.userInfo = action.payload;
+      })
+      .addCase(signup.rejected, (state, action) => {
+        state.authError = action.error.message;
+        state.status = 'error';
       }),
 });
 
-export const { registerUser, login } = userSlice.actions;
 export default userSlice.reducer;
 
-export const getUser = (state) => state.user.currentUser;
-export const getUserContext = (state) => state.user;
-export const getIsAuthenticated = (state) => state.user.isAuthenticated;
+export const getUserContext = (state) => state.auth;
+
+export const getUserInfo = (state) => state.auth.userInfo;
+export const getAccessToken = (state) => state.auth.accessToken;

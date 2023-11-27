@@ -10,7 +10,7 @@ import Button from '../../ui/Button';
 import EmptyCart from '../cart/EmptyCart';
 import { formatCurrency } from '../../utils/currency';
 import { useState } from 'react';
-import { fetchAddress, getUserContext } from '../user/userSlice';
+import { fetchAddress, getUserInfo } from '../user/userSlice';
 
 const isValidPhone = (str) =>
   /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(
@@ -37,7 +37,7 @@ const CreateOrder = () => {
     position,
     status: addressStatus,
     error: errorAddress,
-  } = useSelector(getUserContext);
+  } = useSelector(getUserInfo);
 
   const isLoadingAddress = addressStatus === 'loading';
 

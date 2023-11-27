@@ -1,20 +1,18 @@
 import { useState } from 'react';
 import Button from '../../ui/Button';
-import { useDispatch } from 'react-redux';
+
 import { useNavigate } from 'react-router-dom';
-import { login } from './userSlice';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleOnSubmit = (e) => {
     e.preventDefault();
     if (!email || !password) return;
-    dispatch(login({ email, password }));
+
     navigate('/menu');
   };
 

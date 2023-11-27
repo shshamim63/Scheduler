@@ -14,6 +14,7 @@ import Order, { loader as orderLoader } from './features/order/Order';
 import Registration from './features/user/Registration';
 import AppLayout from './ui/AppLayout';
 import Error from './ui/Error';
+import Instruction from './ui/Instruction';
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,7 @@ const router = createBrowserRouter([
       { path: '/', element: <Home /> },
       { path: '/login', element: <Login /> },
       { path: '/signup', element: <Registration /> },
+      { path: '/verify', element: <Instruction /> },
       {
         path: '/menu',
         element: <Menu />,

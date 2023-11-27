@@ -1,69 +1,51 @@
-import { useReducer } from 'react';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+
 import Button from '../../ui/Button';
-import { useDispatch } from 'react-redux';
-import { registerUser } from './userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { getUserContext, signup } from './userSlice';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+//import { useNavigate } from 'react-router-dom';
 
-const initialState = {
-  firstName: '',
-  lastName: '',
-  email: '',
-  password: '',
-  confirmPassword: '',
-};
-
-function reducer(state, action) {
-  switch (action.type) {
-    case 'change_first_name':
-      return {
-        ...state,
-        firstName: action.payload,
-      };
-    case 'change_last_name':
-      return {
-        ...state,
-        lastName: action.payload,
-      };
-    case 'change_email':
-      return {
-        ...state,
-        email: action.payload,
-      };
-    case 'change_password':
-      return {
-        ...state,
-        password: action.payload,
-      };
-    case 'change_confirm_password':
-      return {
-        ...state,
-        confirmPassword: action.payload,
-      };
-    case 'reset':
-      return initialState;
-    default:
-      throw Error('Unknown action: ' + action.type);
-  }
-}
+const schema = yup
+  .object({
+    username: yup.string().required('Username is required'),
+    email: yup.string().email().required('Email is required'),
+    password: yup
+      .string()
+      .min(8, 'Length should be at least 8 characters')
+      .required('Password is required'),
+    confirmPassword: yup
+      .string()
+      .min(8, 'Length should be at least 8 characters')
+      .required('Confirm Password is required')
+      .oneOf([yup.ref('password')], 'Passwords do not match'),
+  })
+  .required();
 
 const Registration = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm({ resolver: yupResolver(schema) });
 
-  const rdispatch = useDispatch();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (
-      !state.firstName ||
-      !state.lastName ||
-      !state.email ||
-      !state.password ||
-      !state.confirmPassword
-    )
-      return;
-    rdispatch(registerUser(state));
-    navigate('/menu');
+  const { authError, status, userInfo } = useSelector(getUserContext);
+
+  const isSubmitted = status === 'loading';
+
+  useEffect(() => {
+    const registrationSuccess = !authError && userInfo && status === 'idle';
+    if (registrationSuccess) navigate('/verify');
+  }, [authError, userInfo, status, navigate]);
+
+  const onSubmit = (data) => {
+    dispatch(signup(data));
   };
 
   return (
@@ -72,48 +54,31 @@ const Registration = () => {
         {' '}
         👋 Welcome! Please start by creating an account:
       </p>
+
+      {authError && (
+        <p className="mb-5 text-center text-xs text-red-600">{authError}</p>
+      )}
+
       <form
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(onSubmit)}
         className="rounded-md bg-stone-300 px-6 py-6"
       >
         <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="sm:basis-40" htmlFor="first-name">
-            First name
+            Username
           </label>
           <div className="grow">
             <input
-              placeholder="John"
-              id="first-name"
-              name="first-name"
-              value={state.firstName}
-              onChange={(e) => {
-                dispatch({
-                  type: 'change_first_name',
-                  payload: e.target.value,
-                });
-              }}
+              type="text"
+              placeholder="Johnlook"
+              {...register('username', { required: true })}
               className="input w-full"
             />
-          </div>
-        </div>
-        <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
-          <label htmlFor="last-name" className="sm:basis-40">
-            Last name
-          </label>
-          <div className="grow">
-            <input
-              placeholder="Doe"
-              id="last-name"
-              name="last-name"
-              value={state.lastName}
-              onChange={(e) => {
-                dispatch({
-                  type: 'change_last_name',
-                  payload: e.target.value,
-                });
-              }}
-              className="input w-full"
-            />
+            {errors.username && (
+              <p className="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700">
+                {errors.username.message}
+              </p>
+            )}
           </div>
         </div>
         <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -123,18 +88,16 @@ const Registration = () => {
           <div className="grow">
             <input
               placeholder="john@example.com"
-              id="email"
-              name="email"
               type="email"
-              value={state.email}
-              onChange={(e) => {
-                dispatch({
-                  type: 'change_email',
-                  payload: e.target.value,
-                });
-              }}
+              autoComplete="email"
               className="input w-full"
+              {...register('email')}
             />
+            {errors.email && (
+              <p className="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700">
+                {errors.email.message}
+              </p>
+            )}
           </div>
         </div>
         <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -143,18 +106,16 @@ const Registration = () => {
           </label>
           <div className="grow">
             <input
-              id="password"
-              name="password"
               type="password"
-              value={state.confirmPassword}
-              onChange={(e) => {
-                dispatch({
-                  type: 'change_confirm_password',
-                  payload: e.target.value,
-                });
-              }}
               className="input w-full"
+              autoComplete="password"
+              {...register('password')}
             />
+            {errors.password && (
+              <p className="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700">
+                {errors.password.message}
+              </p>
+            )}
           </div>
         </div>
         <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
@@ -163,22 +124,22 @@ const Registration = () => {
           </label>
           <div className="grow">
             <input
-              id="confirm-password"
-              name="confirm-password"
               type="password"
-              value={state.password}
-              onChange={(e) => {
-                dispatch({
-                  type: 'change_password',
-                  payload: e.target.value,
-                });
-              }}
               className="input w-full"
+              autoComplete="password"
+              {...register('confirmPassword')}
             />
+            {errors.confirmPassword && (
+              <p className="mt-2 rounded-md bg-red-100 p-2 text-xs text-red-700">
+                {errors.confirmPassword.message}
+              </p>
+            )}
           </div>
         </div>
         <div className="mt-8 flex flex-row-reverse">
-          <Button type="primary">Sign Up</Button>
+          <Button type="primary" disabled={isSubmitted}>
+            Sign Up
+          </Button>
         </div>
       </form>
     </div>
