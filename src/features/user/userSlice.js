@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
 import { getAddress } from '../../services/apiGeocoding';
-import { registerUser } from '../../services/apiAuth';
+import { loginUser, registerUser } from '../../services/apiAuth';
 
 function getPosition() {
   return new Promise(function (resolve, reject) {
@@ -27,6 +27,11 @@ export const fetchAddress = createAsyncThunk(
 
 export const signup = createAsyncThunk('auth/register', async function (data) {
   const userInfo = await registerUser(data);
+  return userInfo;
+});
+
+export const login = createAsyncThunk('auth/login', async function (data) {
+  const userInfo = await loginUser(data);
   return userInfo;
 });
 
@@ -64,11 +69,25 @@ const userSlice = createSlice({
       })
       .addCase(signup.fulfilled, (state, action) => {
         state.status = 'idle';
+        state.authError = '';
         state.userInfo = action.payload;
       })
       .addCase(signup.rejected, (state, action) => {
         state.authError = action.error.message;
         state.status = 'error';
+      })
+      .addCase(login.pending, (state, action) => {
+        state.status = 'loading';
+        state.authError = '';
+        state.userInfo = action.payload;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        state.status = 'idle';
+        state.authError = '';
+        state.userInfo = action.payload;
+      })
+      .addCase(login.rejected, (state, action) => {
+        (state.status = 'error'), (state.authError = action.error.message);
       }),
 });
 
