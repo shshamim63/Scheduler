@@ -2,12 +2,13 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
-import Button from '../../ui/Button';
-import { useDispatch, useSelector } from 'react-redux';
-import { getUserContext, signup } from './userSlice';
-import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-//import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { useEffect } from 'react';
+
+import { getUserContext, signup } from './userSlice';
+
+import Button from '../../ui/Button';
 
 const schema = yup
   .object({
@@ -30,7 +31,7 @@ const Registration = () => {
     register,
     formState: { errors },
     handleSubmit,
-  } = useForm({ resolver: yupResolver(schema) });
+  } = useForm({ mode: 'onChange', resolver: yupResolver(schema) });
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -40,7 +41,8 @@ const Registration = () => {
   const isSubmitted = status === 'loading';
 
   useEffect(() => {
-    const registrationSuccess = !authError && userInfo && status === 'idle';
+    const registrationSuccess =
+      !authError && status === 'idle' && userInfo && userInfo?.message;
     if (registrationSuccess) navigate('/verify');
   }, [authError, userInfo, status, navigate]);
 
