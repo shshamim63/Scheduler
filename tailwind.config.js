@@ -3,11 +3,14 @@ export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
     fontFamily: {
-      pizza: 'Roboto Mono, monospace',
+      sans: 'Roboto Mono, monospace',
     },
     extend: {
       height: {
         screen: '100dvh',
+      },
+      screens: {
+        xs: '475px',
       },
     },
   },
