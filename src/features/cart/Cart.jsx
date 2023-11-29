@@ -6,23 +6,34 @@ import CartItem from './CartItem';
 import EmptyCart from './EmptyCart';
 
 import { clearCart, getCart } from './cartSlice';
-import { getUserInfo } from '../user/userSlice';
+import { getUserContext, getUserInfo } from '../user/userSlice';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
   const currentUser = useSelector(getUserInfo);
   const cart = useSelector(getCart);
 
+  const { userInfo, status } = useSelector(getUserContext);
+
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleClearCart = () => {
     dispatch(clearCart());
   };
 
+  useEffect(() => {
+    if (!userInfo?.email && status !== 'idle') navigate('/login');
+  }, [userInfo, status, navigate]);
+
   if (!cart.length) return <EmptyCart />;
 
   return (
     <div className="px-4 py-3">
-      <LinkButton to="/menu">&larr; Back to menu</LinkButton>
+      <LinkButton to="/menu" type="link">
+        &larr; Back to menu
+      </LinkButton>
 
       <h2 className="mt-7 text-xl font-semibold">
         Your cart, {currentUser?.email}

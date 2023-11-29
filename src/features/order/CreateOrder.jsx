@@ -1,4 +1,10 @@
-import { Form, redirect, useActionData, useNavigation } from 'react-router-dom';
+import {
+  Form,
+  redirect,
+  useActionData,
+  useNavigate,
+  useNavigation,
+} from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 
 import store from '../../store';
@@ -9,8 +15,8 @@ import { clearCart, getCart, getTotalCartPrice } from '../cart/cartSlice';
 import Button from '../../ui/Button';
 import EmptyCart from '../cart/EmptyCart';
 import { formatCurrency } from '../../utils/currency';
-import { useState } from 'react';
-import { fetchAddress, getUserInfo } from '../user/userSlice';
+import { useEffect, useState } from 'react';
+import { fetchAddress, getUserContext } from '../user/userSlice';
 
 const isValidPhone = (str) =>
   /^\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/.test(
@@ -25,6 +31,7 @@ const CreateOrder = () => {
 
   const formErrors = useActionData();
 
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const cart = useSelector(getCart);
@@ -33,13 +40,18 @@ const CreateOrder = () => {
   const totalPrice = totalCartPrice + priorityPrice;
 
   const {
+    userInfo,
     address,
     position,
     status: addressStatus,
     error: errorAddress,
-  } = useSelector(getUserInfo);
+  } = useSelector(getUserContext);
 
   const isLoadingAddress = addressStatus === 'loading';
+
+  useEffect(() => {
+    if (!userInfo?.email) navigate('/login');
+  }, [userInfo, navigate]);
 
   if (!cart.length) return <EmptyCart />;
 

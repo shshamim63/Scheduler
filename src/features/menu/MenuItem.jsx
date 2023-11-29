@@ -7,6 +7,7 @@ import Button from '../../ui/Button';
 import { addItem, getCurrentQuantityByID } from '../cart/cartSlice';
 import DeleteItem from '../cart/DeleteItem';
 import UpdateItemQuantity from '../cart/UpdateItemQuantity';
+import { getUserContext } from '../user/userSlice';
 
 const MenuItem = ({ pizza }) => {
   const { id, name, unitPrice, ingredients, soldOut, imageUrl } = pizza;
@@ -16,6 +17,7 @@ const MenuItem = ({ pizza }) => {
   const isInCart = currentQuantity > 0;
 
   const dispatch = useDispatch();
+  const { userInfo } = useSelector(getUserContext);
 
   const handleAddToCart = () => {
     const newItem = {
@@ -60,7 +62,11 @@ const MenuItem = ({ pizza }) => {
           )}
 
           {!soldOut && !isInCart && (
-            <Button type="small" onClick={handleAddToCart}>
+            <Button
+              type="small"
+              disabled={!userInfo?.email}
+              onClick={handleAddToCart}
+            >
               Add to cart
             </Button>
           )}
